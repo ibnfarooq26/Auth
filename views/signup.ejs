@@ -1,0 +1,61 @@
+<%- include('partials/header') -%>
+<div class='signup-container'>
+    <form class="signup-form"action='/signup' >
+        <input type="email" placeholder="email" name='email'>
+            <div id='errorEmail'></div>
+        <input type="password" placeholder="password" name='password'>
+            <div id='errorPassword'></div>
+
+        <button type='submit'> sign up</button>
+    </form>
+</div>
+<%- include('partials/footer') -%>
+
+<script>
+    
+    const form=document.querySelector('form');
+    const errorEmail=document.querySelector('#errorEmail');
+    const errorPassword=document.querySelector('#errorPassword');
+
+    form.addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        errorEmail.textContent = '';
+    errorPassword.textContent = '';
+
+        const email=form.email.value;
+        const password=form.password.value
+        let errors={email:'', password:''}
+
+        try {
+
+            const response= await fetch('/signup', {
+                method:'POST',
+                headers:{'content-type':'application/json'},
+                body:JSON.stringify({email, password})
+
+            })
+            const data=await response.json();
+        if (data.user){
+            location.assign('/')
+        }
+        if (data.errors){
+            console.log(data.errors)
+            console.log('data error')
+            errors=data.errors
+            if (errors.email!==''){
+                errorEmail.textContent=errors.email;
+
+            } if (errors.password!==''){
+                errorPassword.textContent=errors.password;
+
+            }
+        
+        }
+        } catch (err){
+            console.log(err)
+        }
+
+    })
+    
+     
+</script>
